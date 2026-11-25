@@ -43,7 +43,7 @@ function Apply-Skin($tor) {
   $tiles = ''
   try {
     foreach ($p in (Get-Content (Join-Path $Root 'pins.json') -Raw | ConvertFrom-Json)) {
-      if ($p.url -match '^https?://') { $tiles += '<a href="' + (& $enc $p.url) + '">' + (& $enc $p.title) + '</a>' }
+      if ($p.url -match '^https?://') { $tiles += '<a class="t" href="' + (& $enc $p.url) + '"><div class="i">' + (& $enc (([string]$p.title + '?').Substring(0,1))) + '</div><div class="l">' + (& $enc $p.title) + '</div></a>' }
     }
   } catch { }
   $html = (Get-Content (Join-Path $Root 'skin\start.html') -Raw -Encoding UTF8).Replace('@@PINS@@', $tiles)

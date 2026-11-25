@@ -3,3 +3,4 @@
 user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);   // lets userChrome.css load
 user_pref("browser.startup.homepage", "@@START@@");
 user_pref("browser.startup.page", 1);                                    // open the home page
+user_pref("torbrowser.settings.quickstart.enabled", true);          // connect to Tor on start without asking
