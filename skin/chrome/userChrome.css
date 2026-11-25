@@ -1,0 +1,63 @@
+/* Squint look for the Firefox engine inside Tor Browser.
+   Rules: colours, corner radius and fades only. No heights, paddings or sizes: Tor Browser sizes the
+   page area from the toolbars (letterboxing), so changing them would make you easier to tell apart. */
+:root {
+  --sq-bg: #1b1a24;
+  --sq-panel: #252433;
+  --sq-line: rgba(255, 255, 255, .08);
+  --sq-text: #ecebf5;
+  --sq-muted: #a3a2b8;
+  --sq-accent: #8b7cf6;
+
+  --lwt-accent-color: var(--sq-bg) !important;
+  --lwt-text-color: var(--sq-text) !important;
+  --toolbar-bgcolor: var(--sq-bg) !important;
+  --toolbar-color: var(--sq-text) !important;
+  --toolbar-field-background-color: var(--sq-panel) !important;
+  --toolbar-field-color: var(--sq-text) !important;
+  --toolbar-field-focus-background-color: var(--sq-panel) !important;
+  --toolbar-field-focus-color: var(--sq-text) !important;
+  --toolbar-field-border-color: transparent !important;
+  --tab-selected-bgcolor: var(--sq-panel) !important;
+  --tab-selected-textcolor: var(--sq-text) !important;
+  --tab-loading-fill: var(--sq-accent) !important;
+  --arrowpanel-background: var(--sq-panel) !important;
+  --arrowpanel-color: var(--sq-text) !important;
+  --arrowpanel-border-color: var(--sq-line) !important;
+  --panel-background: var(--sq-panel) !important;
+  --panel-color: var(--sq-text) !important;
+  --focus-outline-color: var(--sq-accent) !important;
+  --toolbarbutton-hover-background: rgba(255, 255, 255, .08) !important;
+  --toolbarbutton-active-background: rgba(255, 255, 255, .14) !important;
+  --toolbarbutton-icon-fill: var(--sq-text) !important;
+}
+
+#navigator-toolbox, #nav-bar, #TabsToolbar, #PersonalToolbar, #titlebar, .titlebar-buttonbox-container {
+  background-color: var(--sq-bg) !important;
+  background-image: none !important;
+  color: var(--sq-text) !important;
+}
+#navigator-toolbox { border-bottom-color: var(--sq-line) !important; }
+
+/* address bar */
+#urlbar-background { border-radius: 10px !important; border: none !important; transition: box-shadow .2s ease, background-color .2s ease; }
+#urlbar[focused] #urlbar-background, #searchbar:focus-within { box-shadow: 0 0 0 2px var(--sq-accent) !important; }
+#urlbar .urlbarView, .urlbarView { background: var(--sq-panel) !important; color: var(--sq-text) !important; }
+.urlbarView-row[selected] { background: rgba(139, 124, 246, .22) !important; }
+
+/* tabs */
+.tabbrowser-tab { color: var(--sq-muted); }
+.tabbrowser-tab[selected] { color: var(--sq-text); }
+.tab-background { border-radius: 8px !important; transition: background-color .18s ease, box-shadow .18s ease; }
+.tab-background[selected] { background-color: var(--sq-panel) !important; box-shadow: 0 1px 0 var(--sq-accent) inset !important; }
+.tabbrowser-tab:not([selected]):hover .tab-background { background-color: rgba(255, 255, 255, .07) !important; }
+
+/* buttons and menus */
+toolbarbutton, .toolbarbutton-1, .tabbable { transition: background-color .15s ease; }
+.toolbarbutton-1 > .toolbarbutton-icon, toolbarbutton .toolbarbutton-badge-stack { border-radius: 8px !important; }
+menupopup, panel { --panel-border-radius: 12px; }
+menupopup { background-color: var(--sq-panel) !important; color: var(--sq-text) !important; border-color: var(--sq-line) !important; border-radius: 10px !important; }
+menuitem[_moz-menuactive], menu[_moz-menuactive] { background-color: rgba(139, 124, 246, .22) !important; }
+
+/* sidebar */
+#sidebar-box, #sidebar-header { background-color: var(--sq-bg) !important; color: var(--sq-text) !important; }
