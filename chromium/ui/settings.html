@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
+<title>Settings</title>
+<style>
+:root{--bg:#f6f6f5;--card:#fff;--field:#ebebea;--hover:rgba(0,0,0,.05);--line:rgba(0,0,0,.09);--text:#1a1a1a;--muted:#77777a;--accent:#5b7cfa;--bad:#d14b3d;--ok:#2f9e63;--ease:cubic-bezier(.22,.8,.26,1)}
+@media (prefers-color-scheme:dark){:root{--bg:#19191b;--card:#202023;--field:#2a2a2e;--hover:rgba(255,255,255,.06);--line:rgba(255,255,255,.09);--text:#ececee;--muted:#8e8e93;--accent:#8ba2ff}}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font:14px/1.4 "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;display:flex}
+nav{width:210px;flex:none;padding:28px 12px;border-right:1px solid var(--line);position:sticky;top:0;height:100vh}
+nav h1{font-size:15px;font-weight:600;padding:0 12px 18px}
+nav a{display:block;padding:8px 12px;border-radius:8px;color:var(--muted);text-decoration:none;cursor:pointer;transition:background .15s,color .15s;margin-bottom:2px}
+nav a:hover{background:var(--hover);color:var(--text)}
+nav a.on{background:var(--hover);color:var(--text)}
+main{flex:1;overflow:auto;height:100vh;padding:34px 40px 80px}
+section{max-width:720px;display:none}
+section.on{display:block;animation:in .25s var(--ease)}
+body{background:var(--page,var(--bg))}
+nav{background:color-mix(in srgb,var(--bg) 70%,transparent)}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;padding:14px 18px}
+.th{border:2px solid transparent;border-radius:12px;padding:0;cursor:pointer;background:none;text-align:left;transition:transform .15s var(--ease),border-color .15s}
+.th:hover{transform:translateY(-2px)}
+.th.on{border-color:var(--accent)}
+.th i{display:block;height:54px;border-radius:10px 10px 0 0}
+.th span{display:block;padding:6px 10px 7px;font-size:12.5px;background:var(--card);border-radius:0 0 10px 10px;color:var(--text)}
+input[type=color]{width:38px;height:30px;padding:0;border:0;border-radius:8px;background:none;cursor:pointer}
+input[type=range]{width:160px;accent-color:var(--accent)}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+h2{font-size:20px;font-weight:600;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 0;margin-bottom:16px}
+.row{display:flex;align-items:center;gap:14px;padding:13px 18px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .t{flex:1;min-width:0}
+.row .t b{font-weight:500;display:block}
+.row .t small{color:var(--muted);font-size:12px}
+button,select,input{font:inherit;color:inherit}
+.btn{background:var(--field);border:0;border-radius:8px;padding:7px 13px;cursor:pointer;transition:filter .15s,transform .1s}
+.btn:hover{filter:brightness(.95)}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--accent);color:#fff}
+.btn.bad{color:var(--bad)}
+select,input[type=text],input[type=password],input[type=search]{background:var(--field);border:1px solid transparent;border-radius:8px;padding:7px 10px;outline:0}
+input:focus,select:focus{border-color:var(--accent)}
+.sw{position:relative;width:38px;height:22px;flex:none}
+.sw input{opacity:0;position:absolute;inset:0;margin:0;cursor:pointer;z-index:1}
+.sw i{position:absolute;inset:0;border-radius:11px;background:var(--field);border:1px solid var(--line);transition:background .2s}
+.sw i::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .22s var(--ease)}
+.sw input:checked+i{background:var(--accent);border-color:var(--accent)}
+.sw input:checked+i::after{transform:translateX(16px)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;font-weight:600}
+.stat span{color:var(--muted);font-size:12px}
+.list{max-height:420px;overflow:auto}
+.login{display:flex;align-items:center;gap:10px;padding:10px 18px;border-top:1px solid var(--line);animation:in .2s var(--ease) both}
+.login:first-child{border-top:0}
+.login .s{flex:1;min-width:0}
+.login .s b{font-weight:500;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.login .s small{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.login .pw{font-family:Consolas,monospace;color:var(--muted)}
+.mini{background:none;border:0;border-radius:6px;padding:5px 9px;cursor:pointer;color:var(--muted);font-size:12.5px}
+.mini:hover{background:var(--hover);color:var(--text)}
+.empty{padding:26px 18px;color:var(--muted);text-align:center}
+.bar{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.bar input{flex:1;min-width:140px}
+.msg{padding:0 18px 12px;font-size:12.5px;color:var(--muted);min-height:18px}
+.msg.ok{color:var(--ok)}.msg.err{color:var(--bad)}
+#add{display:none;padding:12px 18px;border-top:1px solid var(--line);gap:8px;flex-wrap:wrap}
+#add.on{display:flex;animation:in .2s var(--ease)}
+#add input{flex:1;min-width:150px}
+.q{width:18px;height:18px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--muted);font-size:11px;line-height:16px;padding:0;cursor:pointer;margin-left:6px;vertical-align:1px}
+.q:hover,.q.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.help{display:none;padding:12px 18px 14px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.5;background:var(--hover)}
+.help.on{display:block;animation:in .2s var(--ease)}
+.help b{color:var(--text);font-weight:500}
+.help ul{margin:6px 0 0 18px}
+.sees{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.sees div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.sees h4{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.now{padding:14px 18px;border-top:1px solid var(--line)}
+.now h3{font-size:13px;font-weight:600;margin-bottom:4px}
+.now p{color:var(--muted);font-size:13px}
+.lock{padding:30px 18px;text-align:center;color:var(--muted)}
+.lock .btn{margin-top:12px}
+.note{color:var(--muted);font-size:12.5px;margin:-6px 2px 16px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+input:focus,select:focus{border-color:var(--accent)}
+html[data-calm="1"] *{animation:none!important;transition:none!important}
+</style>
+</head>
+<body>
+<nav>
+  <h1 id="brand">Settings</h1>
+  <a data-s="general">General</a>
+  <a data-s="appearance">Appearance</a>
+  <a data-s="privacy">Privacy &amp; network</a>
+  <a data-s="filter">Content filter</a>
+  <a data-s="passwords">Passwords</a>
+  <a data-s="data">Import &amp; data</a>
+  <a data-s="about">About</a>
+</nav>
+<main>
+  <section id="general">
+    <h2>General</h2>
+    <div class="card">
+      <div class="row"><div class="t"><b>When the browser opens</b><small>Start fresh, or bring back the tabs you had</small></div><select id="startup"><option value="new">New tab</option><option value="restore">Continue where I left off</option></select></div>
+      <div class="row"><div class="t"><b>Search engine</b><small>Used when you type in the address bar</small></div><select id="search"></select></div>
+    </div>
+    <div class="card">
+      <div class="row"><div class="t"><b>Group tabs by type</b><small>Keeps search, work, code, social, video and shopping tabs next to each other, with a small coloured dot</small></div><label class="sw"><input type="checkbox" id="groupTabs"><i></i></label></div>
+    </div>
+
+  </section>
+
+  <section id="appearance">
+    <h2>Appearance</h2>
+    <div class="card"><div class="themes" id="themes"></div></div>
+    <div class="card">
+      <div class="row"><div class="t"><b>Accent colour</b><small>Highlights, focus rings and switches</small></div><input type="color" id="accent"><button class="btn" id="accentReset">Reset</button></div>
+      <div class="row"><div class="t"><b>Frosted glass</b><small>How blurred the start page panels are</small></div><input type="range" id="frost" min="0" max="40"></div>
+      <div class="row"><div class="t"><b>Calm mode</b><small>Turns off every animation. Use this if something flickers.</small></div><label class="sw"><input type="checkbox" id="calm"><i></i></label></div>
+      <div class="row"><div class="t"><b>Picture from a link</b><small>Paste the address of a picture (https://...)</small></div><input type="text" id="bgUrl" placeholder="https://example.com/picture.jpg" size="28"><button class="btn" id="bgUrlGo">Use</button></div>
+      <div class="row"><div class="t"><b>Start page picture</b><small id="bgState">Gradient of the theme</small></div><button class="btn" id="bgPick">Choose picture</button><button class="btn bad" id="bgClear" style="display:none">Remove</button></div>
+    </div>
+    <div class="msg" id="amsg"></div>
+  </section>
+
+  <section id="privacy">
+    <h2>Privacy &amp; network</h2>
+    <div class="card">
+      <div class="row"><div class="t"><b>Hide what I visit from my network <button class="q" data-h="hHide">?</button></b><small>Sends everything through Tor, so Wi-Fi owners and your internet provider cannot see which sites you open</small></div><label class="sw"><input type="checkbox" id="hideTraffic"><i></i></label></div>
+      <div class="help" id="hHide">Without this, your internet provider can see every server you connect to, even though pages are encrypted. With it on, they only see that you use Tor. Pages load slower and some sites ask for more captchas. Turn it off to browse directly, or pick a VPN under Route below. Encrypted DNS and encrypted site names (ECH, where the site supports it) are always on for direct connections.</div>
+      <div class="row"><div class="t"><b>Resist fingerprinting <button class="q" data-h="hFp">?</button></b><small>Canvas, WebGL, audio, time zone, screen, hardware and language all look the same for everyone</small></div><label class="sw"><input type="checkbox" id="fingerprint"><i></i></label></div>
+      <div class="help" id="hFp">Sites can recognise you without cookies by measuring tiny differences in your graphics, sound, fonts and settings. This makes the browser report one generic Windows Chrome: UTC time zone, English, a 1920x1080 screen, 8 cores, fixed graphics name, and slight noise in canvas and audio readouts. Reload open tabs after changing it. Honest limits: installed fonts and web workers are not covered, so it lowers uniqueness a lot but is not the same as Tor Browser.</div>
+      <div class="row"><div class="t"><b>Canvas readback <button class="q" data-h="hCv">?</button></b><small>What sites get when they read back what they drew</small></div><select id="canvasMode"><option value="block">Blank (strictest)</option><option value="noise">Noise (compatible)</option></select></div>
+      <div class="help" id="hCv">Drawing a hidden picture and reading it back is the most common fingerprint. <b>Blank</b> gives every site an empty picture of the right size, the same for everyone. It can break sites that save or crop pictures from a canvas, like QR makers or avatar croppers. <b>Noise</b> keeps those working but gives you a value no one else has.</div>
+      <div class="row"><div class="t"><b>Software graphics</b><small>WebGL and canvas are drawn by the CPU, so your graphics card cannot be told apart. Slower on 3D pages. Restart Squint after changing.</small></div><label class="sw"><input type="checkbox" id="softGpu"><i></i></label></div>
+      <div class="row"><div class="t"><b>Letterbox window</b><small>Page area is rounded to fixed steps, so your exact window size stays private. Leaves thin empty margins.</small></div><label class="sw"><input type="checkbox" id="letterbox"><i></i></label></div>
+      <div class="row"><div class="t"><b>Block WebRTC</b><small>Stops video-call code from revealing local network addresses. Turn off if you need browser calls.</small></div><label class="sw"><input type="checkbox" id="noRtc"><i></i></label></div>
+    </div>
+    <div class="card">
+      <div class="row"><div class="t"><b>Route <button class="q" data-h="hRoute">?</button></b><small>Where your internet traffic goes before it reaches a site</small></div>
+        <select id="route"><option value="direct">Direct</option><option value="proxy">Proxy / VPN</option><option value="tor">Tor</option></select></div>
+      <div class="help" id="hRoute">
+        <b>What is routing?</b> Every page you open travels from this computer to the website. The route decides who can see that trip.
+        <div class="sees">
+          <div><h4>Direct</h4>The Wi-Fi owner can see which servers you connect to. The sites see your real IP address and rough location.</div>
+          <div><h4>Proxy / VPN</h4>The Wi-Fi owner only sees one connection to your VPN or proxy. Sites see the VPN's address. The VPN company can see what the Wi-Fi owner used to see, so pick one you trust.</div>
+          <div><h4>Tor</h4>Traffic hops through three volunteer servers. The Wi-Fi owner sees that you use Tor, sites see an exit server. Strongest privacy, but slower.</div>
+          <div><h4>If it breaks</h4>Proxy and Tor fail closed: if the proxy or Tor is down, pages simply fail to load instead of silently going direct.</div>
+        </div>
+      </div>
+      <div class="row"><div class="t"><b>Send the whole PC through Tor <button class="q" data-h="hSys">?</button></b><small>Other programs use Squint's Tor too. Off until you turn it on. Needs the Tor route.</small></div><label class="sw"><input type="checkbox" id="systemTor"><i></i></label></div>
+      <div class="help" id="hSys">Squint runs its own Tor and tells Windows to use it as the system proxy. Browsers, Discord, many updaters and most apps that follow the Windows proxy setting then go through Tor, and their web addresses are looked up by Tor. <b>Honest limits:</b> apps that ignore the Windows proxy (many games, some launchers, anything using UDP or its own network code) still connect directly, and Tor only carries web-style TCP traffic. It hides your IP and your traffic from your network and provider. It does not change what a browser fingerprint looks like. Squint puts your old proxy setting back when you turn this off or close Squint. If the internet ever stops after a crash, run scripts\restore-network.bat.</div>
+      <div class="now"><h3 id="nowT"></h3><p id="nowP"></p>
+        <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn" id="chk">Check what sites see</button><span class="msg" id="chkMsg" style="padding:0"></span></div></div>
+      <div class="row" id="proxyRow"><div class="t"><b>Proxy address</b><small>For example socks5://10.64.0.1:1080 (Mullvad, only works while Mullvad is connected) or socks5://127.0.0.1:1080 for a local app</small></div>
+        <input type="text" id="proxy" placeholder="socks5://host:port" size="26"></div>
+      <div class="row" id="presetRow"><div class="t"><b>Quick fill</b><small>Fills the address above, then press Enter</small></div>
+        <select id="preset"><option value="">Choose...</option><option value="socks5://10.64.0.1:1080">Mullvad VPN (SOCKS5)</option><option value="socks5://127.0.0.1:1080">Local SOCKS5 on port 1080</option><option value="socks5://127.0.0.1:9050">Tor service on port 9050</option><option value="http://127.0.0.1:8080">Local HTTP proxy on port 8080</option></select></div>
+      <div class="row" id="torRow"><div class="t"><b>Tor SOCKS port</b><small>9050 for the Tor service, 9150 if Tor Browser is open. If neither is running the browser starts its own Tor from the tor folder.</small></div><input type="text" id="torPort" size="6"></div>
+      <div class="row"><div class="t"><b>Encrypted DNS <button class="q" data-h="hDns">?</button></b><small>Hides which site names you look up from the network</small></div>
+        <select id="dns"><option value="quad9">Quad9</option><option value="cloudflare">Cloudflare</option><option value="off">Off</option></select></div>
+      <div class="help" id="hDns">
+        <b>What is DNS?</b> Before a page loads, your computer asks a DNS server "what is the address of example.com?". Normally that question is sent in plain text, so the Wi-Fi owner reads a list of every site you visit.
+        <ul><li><b>Encrypted DNS</b> wraps the question so the network cannot read it.</li>
+        <li><b>Quad9</b> also refuses known malware sites. <b>Cloudflare</b> is usually a little faster.</li>
+        <li>The DNS company sees the lookups, but not the pages.</li>
+        <li>With a Proxy/VPN or Tor route this setting is not used, because the proxy looks the names up for you.</li></ul>
+      </div>
+      <div class="row"><div class="t"><b>HTTPS only <button class="q" data-h="hHttps">?</button></b><small>Upgrades every address to a secure connection</small></div><label class="sw"><input type="checkbox" id="httpsOnly"><i></i></label></div>
+      <div class="help" id="hHttps"><b>HTTPS</b> encrypts the page between you and the site, so the network cannot read passwords or content. Plain http is readable by anyone on the same Wi-Fi. A few old sites only speak http - turn this off for them.</div>
+      <div class="row"><div class="t"><b>Clear browsing data on exit</b><small>Cookies, cache and history are wiped when you close the browser</small></div><label class="sw"><input type="checkbox" id="clearOnExit"><i></i></label></div>
+    </div>
+    <h2 style="margin-top:26px">Passwords lock</h2>
+    <div class="card">
+      <div class="row"><div class="t"><b>Ask before using passwords <button class="q" data-h="hLock">?</button></b><small>Needed to view the list, show, copy or fill a password</small></div><label class="sw"><input type="checkbox" id="verify"><i></i></label></div>
+      <div class="help" id="hLock">Unlocking uses <b>Windows Hello</b> (PIN, fingerprint or face) or your own <b>passcode</b>. Once unlocked it stays open for two minutes, then locks again. Windows Hello needs a PIN set in Windows Settings, Accounts, Sign-in options. If it does not appear on your PC, use a passcode - it always works.</div>
+      <div class="row"><div class="t"><b>Passcode</b><small id="passState"></small></div><button class="btn" id="passSet">Set</button><button class="btn bad" id="passDel" style="display:none">Remove</button></div>
+    </div>
+    <div class="msg" id="pmsg"></div>
+  </section>
+
+  <section id="filter">
+    <h2>Content filter</h2>
+    <div class="card">
+      <div class="row"><div class="t"><b>Block adult content <button class="q" data-h="hAdult">?</button></b><small>Adult sites and the ads that promote them</small></div><label class="sw"><input type="checkbox" id="adultBlock"><i></i></label></div>
+      <div class="help" id="hAdult">Uses public blocklists of adult sites and of the ad networks that serve adult ads. Blocked sites show a notice instead of loading, and adult ads on normal pages are cut before they appear. Search engines are switched to their strict safe-search mode. Lists are never perfect: new sites appear daily, so update now and then.</div>
+      <div class="row"><div class="t"><b>Blocklist</b><small id="adultState"></small></div><button class="btn" id="adultUpdate">Update list</button></div>
+      <div class="row"><div class="t"><b>Hide posts with these words <button class="q" data-h="hWords">?</button></b><small>On every site: social media, forums, comments, video lists</small></div><label class="sw"><input type="checkbox" id="wordFilter"><i></i></label></div>
+      <div class="help" id="hWords">One word or phrase per line, or separated by commas. Any post, comment or video card that contains a word is hidden on the page, on all sites. Whole words only, upper or lower case does not matter. It knows the layout of the big sites (X, Reddit, YouTube, TikTok, LinkedIn, Mastodon) and the generic article tag, so on unusual sites a word may hide a whole article or nothing. Pages reload when you change the list.</div>
+      <div class="row" style="align-items:flex-start"><textarea id="filterWords" rows="4" spellcheck="false" placeholder="one word per line" style="flex:1;background:var(--field);border:0;border-radius:8px;padding:9px 11px;color:inherit;font:inherit;resize:vertical"></textarea></div>
+      <div class="row"><div class="t"><b>Never load these sites</b><small>Domains, one per line. Subdomains are blocked too.</small></div></div>
+      <div class="row" style="align-items:flex-start"><textarea id="blockDomains" rows="4" spellcheck="false" placeholder="example.com" style="flex:1;background:var(--field);border:0;border-radius:8px;padding:9px 11px;color:inherit;font:inherit;resize:vertical"></textarea></div>
+    </div>
+    <div class="msg" id="fmsg"></div>
+  </section>
+
+  <section id="passwords">
+    <h2>Passwords</h2>
+    <div class="stats"><div class="stat"><b id="nLogins">0</b><span>saved logins</span></div></div>
+    <div class="card">
+      <div class="bar">
+        <input type="search" id="q" placeholder="Search saved logins">
+        <button class="btn" id="addBtn">Add</button>
+        <button class="btn" id="csvBtn">Import CSV</button>
+        <button class="btn" id="braveBtn">Import from Brave</button>
+      </div>
+      <div id="add">
+        <input type="text" id="aSite" placeholder="Site, e.g. github.com">
+        <input type="text" id="aUser" placeholder="Username or email">
+        <input type="password" id="aPass" placeholder="Password">
+        <button class="btn pri" id="aSave">Save</button>
+      </div>
+      <div class="msg" id="wmsg" style="padding-top:10px"></div>
+      <div class="lock" id="lockBox">Your saved logins are locked.<br><button class="btn pri" id="unlockBtn">Unlock</button></div>
+      <div class="list" id="logins"></div>
+    </div>
+    <p class="note">Passwords are encrypted with your Windows account and never leave this computer. Sites only get a login when the address matches exactly (www. ignored).</p>
+  </section>
+
+  <section id="data">
+    <h2>Import &amp; data</h2>
+    <div class="stats">
+      <div class="stat"><b id="cB">0</b><span>bookmarks</span></div>
+      <div class="stat"><b id="cH">0</b><span>history entries</span></div>
+      <div class="stat"><b id="cP">0</b><span>pinned sites</span></div>
+      <div class="stat"><b id="cL">0</b><span>saved logins</span></div>
+    </div>
+    <div class="card">
+      <div class="row"><div class="t"><b>Brave profile</b><small>Close Brave first so its files are not locked</small></div><select id="profile"></select></div>
+      <div class="row"><div class="t"><b>Bring over</b></div>
+        <label><input type="checkbox" id="iB" checked> Bookmarks</label>
+        <label><input type="checkbox" id="iH" checked> History</label>
+        <label><input type="checkbox" id="iP" checked> Passwords</label></div>
+      <div class="row"><div class="t"><small>Newer Brave builds lock passwords with a key we cannot read. If the count stays 0, export a CSV from Brave (Settings, Passwords, Export) and use Import CSV.</small></div><button class="btn pri" id="doImport">Import</button></div>
+    </div>
+    <div class="msg" id="imsg"></div>
+    <h2 style="margin-top:26px">Move to Tor Browser</h2>
+    <div class="card">
+      <div class="row"><div class="t"><b>Bookmarks</b><small>Saves an HTML file. In Tor Browser: Bookmarks, Manage bookmarks, Import and Backup, Import Bookmarks from HTML.</small></div><button class="btn" id="exB">Export</button></div>
+      <div class="row"><div class="t"><b>Passwords</b><small>Tor Browser does not keep logins, so this saves a CSV for a password manager like Bitwarden or KeePassXC. It is plain text: import it, then delete it.</small></div><button class="btn bad" id="exP">Export</button></div>
+    </div>
+    <div class="msg" id="xmsg"></div>
+    <div class="card">
+      <div class="row"><div class="t"><b>Clear browsing data now</b><small>Cookies, cache, site storage and history. Bookmarks and passwords stay.</small></div><button class="btn bad" id="clear">Clear</button></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>About</h2>
+    <div class="card">
+      <div class="row"><div class="t"><b id="aName">Browser</b><small id="aVer"></small></div></div>
+      <div class="row"><div class="t"><b>Blocking lists</b><small id="aLists"></small></div></div>
+      <div class="row"><div class="t"><b>Ad blocker status</b><small id="aBlock"></small></div><button class="btn" id="aTest">Test now</button></div>
+      <div class="row"><div class="t"><b>Made with care</b><small id="egg">ʕ•ᴥ•ʔ  (click me)</small></div></div>
+      <div class="row"><div class="t"><b>No telemetry</b><small>Nothing is sent anywhere except the sites you open. Third-party cookies are stripped, referrers trimmed, permissions denied by default.</small></div></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const call = (ch, ...a) => window.settingsApi.invoke(ch, ...a);
+const SECTIONS = ['general', 'appearance', 'privacy', 'filter', 'passwords', 'data', 'about'];
+let state = null, logins = [];
+
+function go(name) {
+  if (!SECTIONS.includes(name)) name = 'general';
+  document.querySelectorAll('section').forEach((s) => s.classList.toggle('on', s.id === name));
+  document.querySelectorAll('nav a').forEach((a) => a.classList.toggle('on', a.dataset.s === name));
+  if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
+  if (name === 'passwords') loadLogins(false);
+}
+document.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => go(a.dataset.s)));
+window.addEventListener('hashchange', () => go(location.hash.slice(1)));
+
+function say(el, text, kind) { el.textContent = text || ''; el.className = 'msg' + (kind ? ' ' + kind : ''); }
+
+async function load() {
+  state = await call('get');
+  const s = state.settings;
+  document.title = 'Settings - ' + state.brand.name;
+  $('brand').textContent = state.brand.name;
+  $('aName').textContent = state.brand.name;
+  $('aVer').textContent = 'Chromium ' + state.versions.chrome + ' / Electron ' + state.versions.electron;
+  $('aLists').textContent = (state.blocker.lists || state.lists) + ' filter lists loaded';
+  blockUi();
+  const se = $('search'); se.replaceChildren();
+  for (const [k, v] of Object.entries(state.engines)) { const o = document.createElement('option'); o.value = v; o.textContent = k; se.append(o); }
+  se.value = s.search;
+  $('route').value = s.route; $('proxy').value = s.proxy || ''; $('torPort').value = s.torPort;
+  $('hideTraffic').checked = s.route !== 'direct'; $('fingerprint').checked = s.fingerprint !== false; $('noRtc').checked = s.noRtc !== false; $('canvasMode').value = s.canvasMode === 'noise' ? 'noise' : 'block'; $('letterbox').checked = s.letterbox !== false; $('softGpu').checked = s.softGpu !== false; $('systemTor').checked = !!s.systemTor;
+  $('dns').value = s.dns; $('httpsOnly').checked = !!s.httpsOnly; $('clearOnExit').checked = !!s.clearOnExit; $('verify').checked = s.verify !== false;
+  counts(); route(); passUi(); applyLook(state.look); appearUi(); filterUi(); $('groupTabs').checked = state.settings.groupTabs !== false; $('calm').checked = !!state.settings.calm; $('startup').value = state.settings.startup || 'new'; document.documentElement.dataset.calm = state.settings.calm ? '1' : '0';
+  const profs = await call('braveProfiles');
+  const p = $('profile'); p.replaceChildren();
+  if (!profs.length) { const o = document.createElement('option'); o.textContent = 'No Brave profile found'; o.value = ''; p.append(o); }
+  for (const x of profs) { const o = document.createElement('option'); o.value = x.dir; o.textContent = x.name + ' (' + x.dir + ')'; p.append(o); }
+}
+function counts() {
+  const c = state.counts;
+  $('nLogins').textContent = c.logins; $('cL').textContent = c.logins;
+  $('cB').textContent = c.bookmarks; $('cH').textContent = c.history; $('cP').textContent = c.pins;
+}
+const NOW = {
+  direct: ['Direct connection', 'Sites see your real IP address. People on your Wi-Fi can see which servers you connect to, though not page contents on https sites. Encrypted DNS hides the site names you look up.'],
+  proxy: ['Through your proxy / VPN', 'Sites see the proxy\'s address instead of yours. People on your Wi-Fi only see a connection to the proxy. If the proxy is unreachable, nothing loads.'],
+  tor: ['Through Tor', 'Sites see a Tor exit server. People on your Wi-Fi only see that you use Tor. Slower than direct. If Tor is unreachable, nothing loads.'],
+};
+function route() {
+  const r0 = $('route').value;
+  $('nowT').textContent = 'Right now: ' + NOW[r0][0];
+  $('nowP').textContent = NOW[r0][1];
+  $('presetRow').style.display = r0 === 'proxy' ? '' : 'none';
+  const r = $('route').value;
+  $('proxyRow').style.display = r === 'proxy' ? '' : 'none';
+  $('torRow').style.display = r === 'tor' ? '' : 'none';
+}
+function passUi() {
+  $('passState').textContent = state.hasPass ? 'A passcode is set.' : 'Not set. Windows Hello is used on its own.';
+  $('passSet').textContent = state.hasPass ? 'Change' : 'Set';
+  $('passDel').style.display = state.hasPass ? '' : 'none';
+}
+$('passSet').addEventListener('click', async () => { const r = await call('setPasscode'); if (r.ok) { state = await call('get'); passUi(); say($('pmsg'), 'Passcode saved.', 'ok'); } else if (r.error && r.error !== 'Cancelled.') say($('pmsg'), r.error, 'err'); });
+$('passDel').addEventListener('click', async () => { const r = await call('removePasscode'); if (r.ok) { state = await call('get'); passUi(); say($('pmsg'), 'Passcode removed.', 'ok'); } else if (r.error && r.error !== 'Cancelled.') say($('pmsg'), r.error, 'err'); });
+$('preset').addEventListener('change', (e) => { if (e.target.value) { $('proxy').value = e.target.value; save({ proxy: e.target.value }); e.target.value = ''; } });
+$('chk').addEventListener('click', async () => {
+  say($('chkMsg'), 'Checking...');
+  const r = await call('checkRoute');
+  if (!r.ok) return say($('chkMsg'), r.error, 'err');
+  say($('chkMsg'), 'Sites see ' + r.ip + (r.tor ? ' (a Tor exit)' : r.route === 'direct' ? ' (your own address)' : '') + '.', 'ok');
+});
+document.querySelectorAll('.q').forEach((b) => b.addEventListener('click', () => { const t = $(b.dataset.h); t.classList.toggle('on'); b.classList.toggle('on'); }));
+async function save(patch) {
+  const r = await call('set', patch);
+  say($('pmsg'), r && r.error ? r.error : 'Saved.', r && r.error ? 'err' : 'ok');
+  setTimeout(() => say($('pmsg'), ''), 2500);
+}
+$('search').addEventListener('change', (e) => save({ search: e.target.value }));
+$('route').addEventListener('change', (e) => { route(); save({ route: e.target.value, proxy: $('proxy').value.trim(), torPort: $('torPort').value }); });
+$('proxy').addEventListener('change', () => save({ proxy: $('proxy').value.trim() }));
+$('torPort').addEventListener('change', () => save({ torPort: $('torPort').value }));
+$('dns').addEventListener('change', (e) => save({ dns: e.target.value }));
+$('hideTraffic').addEventListener('change', (e) => { $('route').value = e.target.checked ? 'tor' : 'direct'; route(); save({ route: $('route').value, proxy: $('proxy').value.trim(), torPort: $('torPort').value }); });
+$('route').addEventListener('change', (e) => { $('hideTraffic').checked = e.target.value !== 'direct'; });
+$('canvasMode').addEventListener('change', (e) => save({ canvasMode: e.target.value }));
+$('systemTor').addEventListener('change', async (e) => { const r = await call('set', { systemTor: e.target.checked }); if (r && r.error) { e.target.checked = false; say($('pmsg'), r.error, 'err'); } else say($('pmsg'), e.target.checked ? 'The whole PC now goes through Tor (apps that use the Windows proxy).' : 'Back to the normal Windows setting.', 'ok'); });
+for (const k of ['fingerprint', 'noRtc', 'letterbox', 'softGpu']) $(k).addEventListener('change', (e) => save({ [k]: e.target.checked }));
+for (const k of ['httpsOnly', 'clearOnExit', 'verify', 'groupTabs']) $(k).addEventListener('change', (e) => save({ [k]: e.target.checked }));
+
+async function loadLogins(prompt) {
+  const r = await call('logins', !!prompt);
+  const locked = !r.ok;
+  $('lockBox').style.display = locked ? '' : 'none';
+  $('logins').style.display = locked ? 'none' : '';
+  if (locked) { if (prompt && r.error) say($('wmsg'), r.error, 'err'); return; }
+  say($('wmsg'), '');
+  logins = r.list;
+  state.counts.logins = logins.length; counts();
+  renderLogins();
+}
+$('unlockBtn').addEventListener('click', () => loadLogins(true));
+function renderLogins() {
+  const q = $('q').value.trim().toLowerCase();
+  const box = $('logins'); box.replaceChildren();
+  const rows = logins.filter((l) => !q || (l.h + ' ' + l.u).toLowerCase().includes(q)).sort((a, b) => a.h.localeCompare(b.h));
+  if (!rows.length) {
+    const e = document.createElement('div'); e.className = 'empty';
+    e.textContent = logins.length ? 'Nothing matches  (・・ ) ?' : 'No saved logins yet  (\u00b4\u2022 \u03c9 \u2022`)  Use Import CSV or Import from Brave.';
+    box.append(e); return;
+  }
+  for (const l of rows) {
+    const d = document.createElement('div'); d.className = 'login';
+    const s = document.createElement('div'); s.className = 's';
+    const b = document.createElement('b'); b.textContent = l.h;
+    const u = document.createElement('small'); u.textContent = l.u || '(no username)';
+    const pw = document.createElement('small'); pw.className = 'pw'; pw.textContent = '••••••••';
+    s.append(b, u, pw);
+    const mk = (t, fn, cls) => { const x = document.createElement('button'); x.className = 'mini' + (cls ? ' ' + cls : ''); x.textContent = t; x.addEventListener('click', fn); return x; };
+    let shown = false, timer = null;
+    const showBtn = mk('Show', async () => {
+      if (shown) { pw.textContent = '••••••••'; showBtn.textContent = 'Show'; shown = false; clearTimeout(timer); return; }
+      say($('wmsg'), 'Waiting for Windows to verify it is you...');
+      const r = await call('reveal', l.idx, l.h);
+      say($('wmsg'), r.ok ? '' : r.error || 'Not verified.', r.ok ? '' : 'err');
+      if (!r.ok) return;
+      pw.textContent = r.pass; showBtn.textContent = 'Hide'; shown = true;
+      timer = setTimeout(() => { pw.textContent = '••••••••'; showBtn.textContent = 'Show'; shown = false; }, 15000);
+    });
+    const copyBtn = mk('Copy', async () => {
+      say($('wmsg'), 'Waiting for Windows to verify it is you...');
+      const r = await call('copy', l.idx, l.h);
+      say($('wmsg'), r.ok ? 'Copied. The clipboard clears in 30 seconds.' : r.error || 'Not verified.', r.ok ? 'ok' : 'err');
+    });
+    const delBtn = mk('Delete', async () => {
+      if (delBtn.dataset.sure !== '1') { delBtn.dataset.sure = '1'; delBtn.textContent = 'Sure?'; setTimeout(() => { delBtn.dataset.sure = ''; delBtn.textContent = 'Delete'; }, 3000); return; }
+      await call('remove', l.idx, l.h); await loadLogins(false);
+    }, 'bad');
+    d.append(s, showBtn, copyBtn, delBtn);
+    box.append(d);
+  }
+}
+$('q').addEventListener('input', renderLogins);
+$('addBtn').addEventListener('click', () => $('add').classList.toggle('on'));
+$('aSave').addEventListener('click', async () => {
+  const r = await call('add', { origin: $('aSite').value, user: $('aUser').value, pass: $('aPass').value });
+  if (!r.ok) return say($('wmsg'), r.error || 'Could not save.', 'err');
+  say($('wmsg'), r.added ? 'Saved.' : 'Already saved (same site and username).', r.added ? 'ok' : '');
+  $('aSite').value = $('aUser').value = $('aPass').value = '';
+  await loadLogins(false);
+});
+$('csvBtn').addEventListener('click', async () => {
+  const r = await call('importCsv');
+  if (r.canceled) return;
+  say($('wmsg'), r.error ? r.error : 'Imported ' + r.passwords + ' passwords.', r.error ? 'err' : 'ok');
+  state = await call('get'); counts();
+  await loadLogins(false);
+});
+for (const [id, ch, what] of [['exB', 'exportBookmarks', 'bookmarks'], ['exP', 'exportPasswords', 'passwords']]) $(id).addEventListener('click', async () => {
+  const r = await call(ch);
+  if (r.canceled) return;
+  say($('xmsg'), r.error ? r.error : 'Saved ' + r.count + ' ' + what + ' to ' + r.file, r.error ? 'err' : 'ok');
+});
+$('braveBtn').addEventListener('click', () => go('data'));
+
+$('doImport').addEventListener('click', async () => {
+  const profile = $('profile').value;
+  if (!profile) return say($('imsg'), 'No Brave profile found on this computer.', 'err');
+  say($('imsg'), 'Importing...');
+  const r = await call('braveImport', { profile, bookmarks: $('iB').checked, history: $('iH').checked, passwords: $('iP').checked });
+  if (r.error) return say($('imsg'), r.error, 'err');
+  const parts = [];
+  if ('bookmarks' in r) parts.push(r.bookmarks + ' bookmarks');
+  if ('history' in r) parts.push(r.history + ' history entries');
+  if ('passwords' in r) parts.push(r.passwords + ' passwords');
+  say($('imsg'), 'Imported ' + (parts.join(', ') || 'nothing') + '.' + (r.passwords === 0 ? ' 0 passwords: use Import CSV.' : ''), 'ok');
+  state = await call('get'); counts();
+});
+let sure = false;
+$('clear').addEventListener('click', async (e) => {
+  if (!sure) { sure = true; e.target.textContent = 'Click again to confirm'; setTimeout(() => { sure = false; e.target.textContent = 'Clear'; }, 3000); return; }
+  sure = false; e.target.textContent = 'Clear';
+  await call('clearData');
+  state = await call('get'); counts();
+  say($('imsg'), 'Cleared.', 'ok');
+});
+
+
+function applyLook(l) {
+  if (!l) return;
+  const r = document.documentElement.style;
+  for (const [k, v] of Object.entries(l.vars)) r.setProperty(k, v);
+  r.setProperty('--card', l.vars['--panel']);
+  r.setProperty('--page', l.grad || l.bg);
+  r.setProperty('--bg', l.bg);
+  document.documentElement.style.colorScheme = l.dark ? 'dark' : 'light';
+}
+function appearUi() {
+  const box = $('themes'); box.replaceChildren();
+  for (const t of state.themes) {
+    const b = document.createElement('button'); b.className = 'th' + (state.settings.theme === t.id ? ' on' : '');
+    const sw = document.createElement('i');
+    sw.style.background = t.c ? 'linear-gradient(135deg,' + t.c.join(',') + ')' : 'linear-gradient(135deg,#f6f6f5 50%,#19191b 50%)';
+    const n = document.createElement('span'); n.textContent = t.name;
+    b.append(sw, n);
+    b.addEventListener('click', async () => { await call('set', { theme: t.id }); state = await call('get'); applyLook(state.look); appearUi(); });
+    box.append(b);
+  }
+  $('accent').value = state.look.accent;
+  $('frost').value = state.settings.frost ?? 18;
+  $('bgState').textContent = state.hasBg ? 'Your picture' : 'Gradient of the theme';
+  $('bgClear').style.display = state.hasBg ? '' : 'none';
+}
+$('accent').addEventListener('change', async (e) => { await call('set', { accent: e.target.value }); state = await call('get'); applyLook(state.look); appearUi(); });
+$('accentReset').addEventListener('click', async () => { await call('set', { accent: '' }); state = await call('get'); applyLook(state.look); appearUi(); });
+$('frost').addEventListener('change', async (e) => { await call('set', { frost: Number(e.target.value) }); state = await call('get'); });
+$('bgPick').addEventListener('click', async () => {
+  const r = await call('pickBg');
+  if (r.canceled) return;
+  say($('amsg'), r.ok ? 'Picture set. Open a new tab to see it.' : r.error, r.ok ? 'ok' : 'err');
+  state = await call('get'); appearUi();
+});
+$('bgClear').addEventListener('click', async () => { await call('clearBg'); state = await call('get'); appearUi(); say($('amsg'), 'Picture removed.', 'ok'); });
+function blockUi() {
+  const b = state.blocker;
+  $('aBlock').textContent = (b.engine ? (b.test ? 'Working. ' : 'Engine loaded but the test failed - it rebuilds itself every 3 minutes. ') : 'Engine not loaded, basic domain blocking only. ')
+    + b.domains.toLocaleString() + ' ad domains in the second net. ' + (b.resources ? 'YouTube-style ad scripts: on.' : 'YouTube-style ad scripts: not loaded.');
+}
+$('aTest').addEventListener('click', async () => { state = await call('get'); blockUi(); });
+$('calm').addEventListener('change', async (e) => { await call('set', { calm: e.target.checked }); state = await call('get'); document.documentElement.dataset.calm = e.target.checked ? '1' : '0'; });
+$('startup').addEventListener('change', (e) => call('set', { startup: e.target.value }));
+$('bgUrlGo').addEventListener('click', async () => {
+  say($('amsg'), 'Downloading...');
+  const r = await call('setBgUrl', $('bgUrl').value);
+  say($('amsg'), r.ok ? 'Picture set. Open a new tab to see it.' : r.error, r.ok ? 'ok' : 'err');
+  if (r.ok) { $('bgUrl').value = ''; state = await call('get'); appearUi(); }
+});
+function filterUi() {
+  $('adultBlock').checked = !!state.settings.adultBlock;
+  $('wordFilter').checked = !!state.settings.wordFilter; $('filterWords').value = (state.settings.filterWords || []).join('\n'); $('blockDomains').value = (state.settings.blockDomains || []).join('\n');
+  $('adultState').textContent = state.adult.have ? (state.adult.count ? state.adult.count.toLocaleString() + ' domains loaded' : 'Downloaded. Turn the filter on to load it.') : 'Not downloaded yet. Press Update list.';
+}
+$('wordFilter').addEventListener('change', async (e) => { await call('set', { wordFilter: e.target.checked }); say($('fmsg'), e.target.checked ? 'Word filter on.' : 'Word filter off.', 'ok'); });
+$('filterWords').addEventListener('change', async (e) => { await call('set', { filterWords: e.target.value }); state = await call('get'); filterUi(); say($('fmsg'), 'Words saved.', 'ok'); });
+$('blockDomains').addEventListener('change', async (e) => { await call('set', { blockDomains: e.target.value }); state = await call('get'); filterUi(); say($('fmsg'), 'Blocked sites saved.', 'ok'); });
+$('adultBlock').addEventListener('change', async (e) => {
+  if (e.target.checked && !state.adult.have) {
+    say($('fmsg'), 'Downloading the lists...');
+    const r = await call('updateAdult');
+    if (!r.ok) { e.target.checked = false; return say($('fmsg'), r.error, 'err'); }
+  }
+  await call('set', { adultBlock: e.target.checked });
+  state = await call('get'); filterUi();
+  say($('fmsg'), e.target.checked ? 'Filter is on.' : 'Filter is off.', 'ok');
+});
+$('adultUpdate').addEventListener('click', async () => {
+  say($('fmsg'), 'Downloading the lists...');
+  const r = await call('updateAdult');
+  state = await call('get'); filterUi();
+  say($('fmsg'), r.ok ? 'Updated: ' + r.count.toLocaleString() + ' domains.' : r.error, r.ok ? 'ok' : 'err');
+});
+
+(() => {
+  const faces = ['ʕ•ᴥ•ʔ', '/ᐠ｡ꞈ｡ᐟ\\ ♡', '(◕‿◕)✧', 'ฅ^•ﻌ•^ฅ', '(づ｡◕‿‿◕｡)づ ★', '(=^･ω･^=)', '૮ ˶ᵔ ᵕ ᵔ˶ ა'];
+  const art = ['  /\\_/\\', ' ( o.o )', '  > ^ <   purr', ''];
+  let i = 0, n = 0; const egg = $('egg');
+  egg.style.cursor = 'pointer';
+  egg.addEventListener('click', () => {
+    i = (i + 1) % faces.length; n++;
+    egg.textContent = n >= 7 ? art.join('\n') + ' ♡ ★ ♡' : faces[i] + '  (click me)';
+    egg.style.whiteSpace = 'pre';
+  });
+  console.log('%c/ᐠ｡ꞈ｡ᐟ\\  hi', 'font-size:14px');
+})();
+load().then(() => go(location.hash.slice(1)));
+</script>
+</body>
+</html>

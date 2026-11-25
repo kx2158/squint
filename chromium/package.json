@@ -1,0 +1,22 @@
+{
+  "name": "veil-browser",
+  "productName": "Squint",
+  "version": "0.1.0",
+  "description": "Private, minimal Chromium browser",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "lists": "node scripts/fetch-lists.js",
+    "postinstall": "node scripts/fetch-lists.js"
+  },
+  "dependencies": {
+    "@ghostery/adblocker-electron": "^2.0.0",
+    "@ghostery/adblocker-electron-preload": "^2.0.0",
+    "sql.js": "^1.12.0",
+    "tldts": "^6.1.0"
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}

@@ -4,6 +4,17 @@ Squint on the Firefox engine from Tor Browser. Tor Browser does the privacy work
 identical fingerprint for everyone, letterboxing, no history on disk. Squint is the look on top
 (theme, start page, name, icon).
 
+## Two versions in this repo
+- **This folder (root): Squint on the Tor Browser engine.** The only one that can look like every other Tor
+  user, so it is the one for anything that has to stay anonymous. Circuits, new circuit and new identity are
+  Tor Browser's own.
+- **`chromium/`: Squint on Electron (Chromium).** More comfortable, with its own interface. Hides your IP and
+  traffic through Tor and has a circuit panel, new circuit and new identity. It cannot match Tor Browser's
+  fingerprint: it uses spoofing, noise and software graphics to get as close as Chromium allows. Extras:
+  an optional "send the whole PC through Tor" mode (Windows proxy setting, off by default), a word filter
+  that hides posts on any site, a never-load domain list and an adult-content filter. See `chromium/README.md`.
+  Run `setup.bat` inside `chromium/`.
+
 ## Use
 1. Run `setup.bat`. It finds Tor Browser, or downloads it from torproject.org and checks its SHA-256.
 2. Open Tor Browser once, connect, close it (first time only).

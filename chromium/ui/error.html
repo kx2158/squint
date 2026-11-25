@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<title>Cannot reach site</title>
+<style>
+  :root { --bg: #ffffff; --fg: #1b1b1b; --mut: #747474; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1b1b1b; --fg: #e8e8e8; --mut: #8c8c8c; } }
+  html, body { height: 100%; margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.5 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 460px; margin: 18vh auto 0; padding: 0 24px; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 8px; }
+  p { margin: 0 0 6px; color: var(--mut); word-break: break-all; }
+  code { font: 12px ui-monospace, Consolas, monospace; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="h">Cannot reach this site <span style="color:var(--mut);font-weight:400">(╥﹏╥)</span></h1>
+  <p id="u"></p>
+  <p><code id="d"></code></p>
+  <p id="note">This browser upgrades http to https. If this site only speaks http, turn off HTTPS-only in Settings.</p>
+</main>
+<script>
+  const q = new URLSearchParams(location.search);
+  document.getElementById('u').textContent = q.get('url') || '';
+  if (q.get('filter') === '1') {
+    document.getElementById('h').textContent = 'Blocked by the content filter';
+    document.getElementById('u').textContent = (q.get('url') || '').replace(/[?#].*$/, '');
+    document.getElementById('note').textContent = 'You turned on the adult-content filter. You can switch it off in Settings, Content filter.';
+  }
+  document.getElementById('d').textContent = (q.get('desc') || '') + ' (' + (q.get('code') || '') + ')';
+</script>
+</body>
+</html>

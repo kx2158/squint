@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
+<title>New tab</title>
+<style>
+  :root { --text: #1b1b1b; --muted: #6d6d75; --glass: rgba(255,255,255,.34); --glass2: rgba(255,255,255,.5); --edge: rgba(255,255,255,.55); --blur: 18px; --accent: #5b7cfa; }
+  @media (prefers-color-scheme: dark) { :root { --text: #ececee; --muted: #a8a8b3; --glass: rgba(255,255,255,.09); --glass2: rgba(255,255,255,.15); --edge: rgba(255,255,255,.16); } }
+  :root[data-dark="1"] { --text: #ececee; --muted: #a8a8b3; --glass: rgba(255,255,255,.09); --glass2: rgba(255,255,255,.15); --edge: rgba(255,255,255,.16); }
+  :root[data-dark="0"] { --text: #1b1b1b; --muted: #5f5f68; --glass: rgba(255,255,255,.34); --glass2: rgba(255,255,255,.5); --edge: rgba(255,255,255,.55); }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; color: var(--text); font: 12px/1.3 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; user-select: none; overflow: hidden; }
+  body { background: var(--page, #1b1a2e) center / cover no-repeat fixed; }
+  body::before { content: ""; position: fixed; inset: 0; background: var(--img) center / cover no-repeat; opacity: 0; transition: opacity .6s; }
+  body.has-img::before { opacity: 1; }
+  main { position: relative; height: 100%; display: grid; place-items: center; padding-bottom: 12vh; }
+  #card { padding: 30px 30px 26px; border-radius: 26px; background: var(--glass); border: 1px solid var(--edge);
+    backdrop-filter: blur(var(--blur)) saturate(1.5); -webkit-backdrop-filter: blur(var(--blur)) saturate(1.5);
+    box-shadow: 0 18px 50px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.18); animation: rise .6s cubic-bezier(.22,.8,.26,1) both; max-width: 92vw; }
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, 88px); gap: 22px 16px; justify-content: center; width: min(720px, 80vw); }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px) scale(.97); } }
+  .t { animation: rise .5s cubic-bezier(.22,.8,.26,1) both; transition: color .15s; position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); text-decoration: none; }
+  .t:hover { color: var(--text); }
+  .t:hover .i { transform: translateY(-3px); background: var(--glass2); }
+  .i { transition: transform .22s cubic-bezier(.22,.8,.26,1), background .2s; width: 56px; height: 56px; border-radius: 16px; background: var(--glass);
+    border: 1px solid var(--edge); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 4px 14px rgba(0,0,0,.12);
+    display: grid; place-items: center; font-size: 18px; text-transform: uppercase; color: var(--text); }
+  .l { max-width: 88px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .x { position: absolute; top: -6px; right: 8px; width: 18px; height: 18px; border-radius: 50%; border: 0; background: var(--text); color: #111; font-size: 11px; line-height: 18px; text-align: center; display: none; cursor: default; }
+  .t:hover .x { display: block; }
+  .add { background: none; border: 0; font: inherit; cursor: default; }
+  .add .i { border-style: dashed; font-size: 20px; }
+  input { width: 88px; height: 28px; border: 0; border-bottom: 1px solid var(--text); background: none; color: var(--text); font: inherit; text-align: center; outline: 0; user-select: text; }
+
+  /* ascii corner: a left-aligned block, centred as a whole, so the drawing keeps its shape */
+  #wrap { position: fixed; left: 0; right: 0; bottom: 5vh; display: flex; justify-content: center; pointer-events: none; }
+  #art { pointer-events: auto; text-align: left; white-space: pre; color: var(--text); opacity: .62; cursor: pointer; padding: 10px 16px; border-radius: 16px;
+    font: 15px/1.2 Consolas, "Cascadia Mono", "Courier New", monospace; transition: opacity .3s, transform .3s cubic-bezier(.22,.8,.26,1); }
+  #art:hover { opacity: 1; transform: translateY(-3px); }
+  .fl { position: fixed; pointer-events: none; color: var(--text); animation: fl 1.6s ease-out forwards; font: 16px Consolas, monospace; }
+  @keyframes fl { to { transform: translateY(-70px); opacity: 0; } }
+  html[data-calm="1"] * { animation: none !important; transition: none !important; }
+</style>
+</head>
+<body>
+<main><div id="card"><div id="grid"></div></div></main>
+<div id="wrap"><pre id="art" title="click me"></pre></div>
+<script>
+  const grid = document.getElementById('grid');
+  const mk = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  // theme: gradient / picture / glass strength come from the browser
+  (window.lookApi ? window.lookApi.get() : Promise.resolve(null)).then((r) => {
+    if (!r) return;
+    const l = r.look, s = document.documentElement.style;
+    document.documentElement.dataset.dark = l.dark ? '1' : '0';
+    document.documentElement.dataset.calm = l.calm ? '1' : '0';
+    s.setProperty('--blur', l.frost + 'px');
+    s.setProperty('--accent', l.accent);
+    s.setProperty('--page', l.grad || (l.dark ? '#19191b' : '#f6f6f5'));
+    document.body.style.background = l.grad || (l.dark ? '#19191b' : '#f6f6f5');
+    if (r.image) { s.setProperty('--img', 'url(' + r.image + ')'); document.body.classList.add('has-img'); }
+  }).catch(() => {});
+
+  function draw(pins) {
+    grid.replaceChildren();
+    let n = 0;
+    for (const p of pins) {
+      const a = mk('a', 't'); a.href = p.url; a.style.animationDelay = (n++ * 45) + 'ms';
+      a.append(mk('div', 'i', (p.title.match(/[a-z0-9]/i) || ['?'])[0]), mk('div', 'l', p.title));
+      const x = mk('button', 'x', '×'); x.title = 'Remove';
+      x.onclick = async (e) => { e.preventDefault(); e.stopPropagation(); draw(await window.pins.remove(p.url)); };
+      a.append(x);
+      grid.append(a);
+    }
+    const add = mk('button', 't add'); add.style.animationDelay = (n * 45) + 'ms';
+    add.append(mk('div', 'i', '+'), mk('div', 'l', 'Pin'));
+    add.onclick = () => {
+      const inp = mk('input'); inp.placeholder = 'address'; inp.spellcheck = false;
+      add.replaceChildren(mk('div', 'i', '+'), inp); inp.focus();
+      inp.onkeydown = async (e) => { if (e.key === 'Enter' && inp.value.trim()) draw(await window.pins.add(inp.value)); else if (e.key === 'Escape') draw(await window.pins.get()); };
+      inp.onblur = async () => draw(await window.pins.get());
+    };
+    grid.append(add);
+  }
+
+  // plain ASCII only (every character the same width), so nothing shifts
+  const arts = [
+String.raw`  /\_/\
+ ( o.o )   <3
+  > ^ <   *  .`,
+String.raw`  *    .  +     .   *
+     .   <3     +
+  +    *   .  *    .`,
+String.raw`   |\__/,|   (\
+ _.|o o  |_   ) )
+-(((---(((--------`,
+String.raw`  /\_/\      /\_/\
+ ( -.- )    ( ^.^ )
+  > ~ <  zZ  > <3 <`,
+String.raw`   (\_/)
+   (o.o)   *
+   (> <)  <3
+  ~~~~~~~~~`,
+String.raw`    .--.
+   |o_o |   hi
+   |:_/ |
+  //   \ \
+ (|     | )`,
+  ];
+  const bits = ['<3', '*', '+', '.', '~'];
+  let ai = Math.floor(Math.random() * arts.length);
+  const art = document.getElementById('art');
+  art.textContent = arts[ai];
+  art.onclick = (e) => {
+    ai = (ai + 1) % arts.length; art.textContent = arts[ai];
+    for (let i = 0; i < 6; i++) {
+      const s = mk('span', 'fl', bits[Math.floor(Math.random() * bits.length)]);
+      s.style.left = (e.clientX - 50 + Math.random() * 100) + 'px'; s.style.top = (e.clientY - 12 + Math.random() * 18) + 'px';
+      document.body.append(s); setTimeout(() => s.remove(), 1700);
+    }
+  };
+  (window.pins ? window.pins.get() : Promise.resolve([])).then(draw);
+</script>
+</body>
+</html>

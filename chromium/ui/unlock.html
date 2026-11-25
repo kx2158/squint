@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<title>Unlock</title>
+<style>
+:root{--bg:#f6f6f5;--field:#ebebea;--text:#1a1a1a;--muted:#77777a;--accent:#5b7cfa;--bad:#d14b3d;--line:rgba(0,0,0,.09)}
+@media (prefers-color-scheme:dark){:root{--bg:#19191b;--field:#2a2a2e;--text:#ececee;--muted:#8e8e93;--accent:#8ba2ff;--line:rgba(255,255,255,.09)}}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.4 "Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;padding:26px 28px;display:flex;flex-direction:column;gap:12px;height:100vh;animation:in .25s cubic-bezier(.22,.8,.26,1)}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+h1{font-size:17px;font-weight:600}
+p{color:var(--muted);font-size:13px}
+input{font:inherit;color:inherit;background:var(--field);border:1px solid transparent;border-radius:8px;padding:9px 11px;outline:0;width:100%}
+input:focus{border-color:var(--accent)}
+button{font:inherit;color:inherit;border:0;border-radius:8px;padding:9px 14px;cursor:pointer;background:var(--field);transition:filter .15s,transform .1s}
+button:hover{filter:brightness(.95)}button:active{transform:scale(.98)}
+button.pri{background:var(--accent);color:#fff}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.link{background:none;color:var(--muted);padding:6px;font-size:13px}
+.link:hover{color:var(--text)}
+#err{color:var(--bad);font-size:12.5px;min-height:18px}
+.sp{flex:1}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<h1 id="h">Unlock</h1>
+<p id="why"></p>
+<div id="passBox" hidden>
+  <input type="password" id="p1" placeholder="Passcode" autofocus>
+</div>
+<div id="setBox" hidden>
+  <input type="password" id="s1" placeholder="New passcode (4+ characters)" style="margin-bottom:8px">
+  <input type="password" id="s2" placeholder="Repeat passcode">
+</div>
+<div id="err"></div>
+<div class="sp"></div>
+<div class="row" id="main"></div>
+<div class="row" id="alt"></div>
+<script>
+const $ = (id) => document.getElementById(id);
+const mk = (t, c, x, f) => { const b = document.createElement('button'); b.className = c; b.textContent = x; b.onclick = f; return b; };
+const err = (t) => { $('err').textContent = t || ''; };
+let info;
+const hello = async () => {
+  err(''); $('why').textContent = 'Waiting for Windows Hello. If nothing appears, check behind this window.';
+  const r = await unlockApi.hello();
+  if (!r.ok) { err(r.error); $('why').textContent = info.reason; }
+};
+async function init() {
+  info = await unlockApi.init();
+  const win = info.platform === 'win32', mac = info.platform === 'darwin';
+  const osName = win ? 'Windows Hello' : mac ? 'Touch ID' : 'device unlock';
+  $('why').textContent = info.reason;
+  const main = $('main'), alt = $('alt');
+  const showSet = () => {
+    $('h').textContent = 'Set a passcode';
+    $('why').textContent = 'A short passcode that unlocks your saved passwords. It stays on this computer.';
+    $('passBox').hidden = true; $('setBox').hidden = false; $('s1').focus(); err('');
+    main.replaceChildren(); alt.replaceChildren();
+    const save = async () => {
+      if ($('s1').value !== $('s2').value) return err('The two passcodes do not match.');
+      const r = await unlockApi.set($('s1').value); if (!r.ok) err(r.error);
+    };
+    main.append(mk('', 'pri', 'Save passcode', save), mk('', '', 'Cancel', () => unlockApi.cancel()));
+    $('s2').onkeydown = (e) => { if (e.key === 'Enter') save(); };
+  };
+  if (info.mode === 'set') return showSet();
+  $('h').textContent = 'Unlock passwords';
+  if (info.hasPass) {
+    $('passBox').hidden = false; $('p1').focus();
+    const go = async () => { const r = await unlockApi.pass($('p1').value); if (!r.ok) { err(r.error); $('p1').select(); } };
+    main.append(mk('', 'pri', 'Unlock', go), mk('', '', 'Cancel', () => unlockApi.cancel()));
+    $('p1').addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+    if (win || mac) alt.append(mk('', 'link', 'Use ' + osName + ' instead', hello));
+  } else {
+    if (win || mac) main.append(mk('', 'pri', 'Verify with ' + osName, hello));
+    main.append(mk('', '', 'Cancel', () => unlockApi.cancel()));
+    alt.append(mk('', 'link', 'Set a passcode instead', showSet));
+    $('why').textContent = info.reason + '. ' + (win ? 'This needs a PIN, fingerprint or face set up in Windows. If it does not work, close this and set a passcode in Settings, Privacy.' : '');
+  }
+}
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape') unlockApi.cancel(); });
+init();
+</script>
+</body>
+</html>

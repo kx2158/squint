@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' file:; script-src 'self' file:; img-src data:">
+<title>Browser</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="tabs">
+  <div id="tablist"><div id="ind"></div></div>
+  <button id="newtab" class="icon" title="New tab (Ctrl+T)"></button>
+  <div id="spacer"></div>
+</div>
+<div id="bar">
+  <button id="back" class="icon" title="Back"></button>
+  <button id="fwd" class="icon" title="Forward"></button>
+  <button id="reload" class="icon" title="Reload"></button>
+  <div id="omni">
+    <span id="lock" class="glyph"></span>
+    <input id="url" spellcheck="false" autocomplete="off" placeholder="Search or enter address">
+    <span id="route" title="Traffic route"></span>
+    <span id="shield" title="Blocked on this page"><i></i><b>0</b></span>
+    <button id="star" class="icon small" title="Bookmark (Ctrl+D)"></button>
+  </div>
+  <div id="find" hidden>
+    <input id="fq" spellcheck="false" placeholder="Find in page">
+    <span id="fc"></span>
+    <button id="fprev" class="icon small" title="Previous (Shift+Enter)">&#8593;</button>
+    <button id="fnext" class="icon small" title="Next (Enter)">&#8595;</button>
+    <button id="fclose" class="icon small" title="Close (Esc)">&times;</button>
+  </div>
+  <button id="menu" class="icon" title="Menu"></button>
+  <i id="load"></i>
+</div>
+<div id="scrim" hidden></div>
+<div id="suggest" hidden></div>
+<div id="panel" hidden></div>
+<div id="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
