@@ -1,4 +1,5 @@
 {
   "name": "Squint",
-  "torDir": ""
+  "torDir": "",
+  "comfortMode": true
 }

@@ -54,8 +54,13 @@ function Apply-Skin($tor) {
   # user.js: replace only our own block
   $uj = Join-Path $prof 'user.js'
   $old = if (Test-Path $uj) { Get-Content $uj -Raw } else { '' }
-  $old = [regex]::Replace($old, '(?s)// >>> squint.*?// <<< squint\r?\n?', '')
+  $old = [regex]::Replace($old, '(?s)// >>> squint.*?// <<< squint[^\r\n]*\r?\n?', '')
   $block = (Get-Content (Join-Path $Root 'skin\user.js') -Raw).Replace('@@START@@', $startUrl)
-  [IO.File]::WriteAllText($uj, ($old + "// >>> squint`r`n" + $block + "`r`n// <<< squint`r`n"), (New-Object Text.UTF8Encoding($false)))
+  $new = $old + "// >>> squint`r`n" + $block + "`r`n// <<< squint`r`n"
+  # comfort mode (config.json "comfortMode"): history, logins and tabs kept, site data wiped on exit
+  if ((Get-Config).comfortMode -ne $false) {
+    $new += "// >>> squint-comfort`r`n" + (Get-Content (Join-Path $Root 'skin\comfort.js') -Raw) + "`r`n// <<< squint-comfort`r`n"
+  }
+  [IO.File]::WriteAllText($uj, $new, (New-Object Text.UTF8Encoding($false)))
   return $true
 }
