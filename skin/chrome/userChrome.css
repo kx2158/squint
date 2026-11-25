@@ -52,7 +52,7 @@
 
 /* only what you need: back, forward, reload, address, star, menu */
 #unified-extensions-button, #alltabs-button, #firefox-view-button, #security-level-button,
-#new-identity-button, #downloads-button, #nav-bar-overflow-button, #tracking-protection-icon-container,
+#downloads-button, #nav-bar-overflow-button, #tracking-protection-icon-container,
 #PanelUI-button > #appMenu-fxa-label2, #fxa-toolbar-menu-button { display: none !important; }
 
 /* address bar: a soft pill */
@@ -89,3 +89,8 @@ menupopup, panel { --panel-border-radius: 14px; }
 menupopup { background-color: #262238 !important; color: var(--sq-text) !important; border-color: var(--sq-line) !important; border-radius: 12px !important; }
 menuitem[_moz-menuactive], menu[_moz-menuactive] { background-color: rgba(167, 139, 250, .24) !important; }
 #sidebar-box, #sidebar-header { background: #1f1c33 !important; color: var(--sq-text) !important; }
+
+/* Tor circuit tools, as in Tor Browser: New identity button stays in the toolbar. The circuit for the
+   current site is in the site info panel (click the icon at the left of the address bar), and the menu has
+   "New Tor circuit for this site" (Ctrl+Shift+L) and "New identity" (Ctrl+Shift+U). */
+#new-identity-button { display: -moz-box !important; }
